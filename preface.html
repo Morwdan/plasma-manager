@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="style.css" />
 <script src="highlightjs/highlight.pack.js" type="text/javascript"></script><script src="highlightjs/loader.js" type="text/javascript"></script>
 <script>
+            //<![CDATA[
             document.addEventListener("DOMContentLoaded", () => {
                 const nav = document.getElementById("manual-toc");
                 nav?.addEventListener("click", (e) => {
@@ -17,10 +18,70 @@
                     }
                 });
             });
+            //]]>
+        </script>
+<script>
+//<![CDATA[
+function createObserver() {
+  const content = document.querySelector("main.content");
+  const headings = content.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+  const links = new Map();
+  document.querySelectorAll("ol li a").forEach((a) => {
+    links.set(a.hash.slice(1), a);
+  });
+  const visible = new Set();
+
+  function setActive(link) {
+    document
+      .querySelectorAll("ol.toc a.active, ol.toc a.active-trail")
+      .forEach((a) => a.classList.remove("active", "active-trail"));
+
+    link.classList.add("active");
+
+    let li = link.closest("li")?.parentElement.closest("li");
+    for (; li; li = li.parentElement.closest("li")) {
+      li.querySelector(":scope > details > summary > a")?.classList.add(
+        "active-trail",
+      );
+    }
+  }
+
+  const handleIntersect = (entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) visible.add(entry.target);
+      else visible.delete(entry.target);
+    }
+
+    const current = [...visible]
+      .filter((h) => links.has(h.id))
+      .sort(
+        (a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top,
+      )[0];
+
+    if (!current) return;
+
+    const link = links.get(current.id);
+    if (link) setActive(link);
+  };
+
+  const observer = new IntersectionObserver(handleIntersect, {
+    root: content,
+    rootMargin: "0px 0px -70% 0px",
+    threshold: 0,
+  });
+
+  [...headings]
+    .filter((h) => h.id && links.has(h.id))
+    .forEach((h) => observer.observe(h));
+}
+
+document.addEventListener("DOMContentLoaded", createObserver);
+//]]>
         </script>
  <meta name="generator" content="nixos-render-docs" />
- <link rel="home" href="index.xhtml" title="Plasma-Manager manual" />
- <link rel="up" href="index.xhtml" title="Plasma-Manager manual" /><link rel="prev" href="index.xhtml" title="Plasma-Manager manual" /><link rel="next" href="introduction.xhtml" title="Introduction" />
+ <link rel="home" href="index.html" title="Plasma-Manager manual" />
+ <link rel="up" href="index.html" title="Plasma-Manager manual" /><link rel="prev" href="index.html" title="Plasma-Manager manual" /><link rel="next" href="introduction.html" title="Introduction" />
  </head>
  <body>
   <button type="button" class="toc-toggle" popovertarget="manual-toc" popovertargetaction="toggle" aria-label="Toggle table of contents">☰</button>
@@ -31,14 +92,14 @@
     <th colspan="3" align="center">Preface</th>
     </tr>
     <tr>
-    <td width="20%" align="left"><a accesskey="p" href="index.xhtml">Prev</a>&nbsp;</td>
+    <td width="20%" align="left"><a accesskey="p" href="index.html">Prev</a>&nbsp;</td>
     <th width="60%" align="center">&nbsp;</th>
-    <td width="20%" align="right">&nbsp;<a accesskey="n" href="introduction.xhtml">Next</a></td>
+    <td width="20%" align="right">&nbsp;<a accesskey="n" href="introduction.html">Next</a></td>
     </tr>
    </table>
    <hr />
   </div>
-  <nav id="manual-toc" class="toc-sidebar" popover="auto"><ol class="toc"><li class="preface"><a href="preface.xhtml">Preface</a></li><li class="part"><a href="introduction.xhtml">Introduction</a></li><li class="appendix"><a href="options.xhtml">A. Plasma-Manager Options</a></li></ol></nav>
+  <nav id="manual-toc" class="toc-sidebar" popover="auto"><ol class="toc"><li class="preface"><a href="preface.html">Preface</a></li><li class="part"><a href="introduction.html">Introduction</a></li><li class="appendix"><a href="options.html">A. Plasma-Manager Options</a></li></ol></nav>
   <main class="content"><div class="preface"> <div class="titlepage">  <div>   <div>    <h2 id="preface" class="title" >Preface   </h2>  </div> </div></div><p>Plasma Manager is a <a class="link" href="https://github.com/nix-community/home-manager"  target="_top">Home Manager</a>
 module capable of configuring as much of KDE Plasma as
 possible, using <a class="link" href="https://nixos.org"  target="_top">Nix</a>.</p><p>The project has progressed a lot lately, to the extent where
@@ -48,13 +109,13 @@ but it’s also possible to use it to some extent on Plasma 5 as well.</p>
    <hr />
    <table width="100%" summary="Navigation footer">
     <tr>
-    <td width="40%" align="left"><a accesskey="p" href="index.xhtml">Prev</a>&nbsp;</td>
+    <td width="40%" align="left"><a accesskey="p" href="index.html">Prev</a>&nbsp;</td>
     <td width="20%" align="center">&nbsp;</td>
-    <td width="40%" align="right">&nbsp;<a accesskey="n" href="introduction.xhtml">Next</a></td>
+    <td width="40%" align="right">&nbsp;<a accesskey="n" href="introduction.html">Next</a></td>
     </tr>
     <tr>
      <td width="40%" align="left" valign="top">Plasma-Manager manual&nbsp;</td>
-     <td width="20%" align="center"><a accesskey="h" href="index.xhtml">Home</a></td>
+     <td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
      <td width="40%" align="right" valign="top">&nbsp;Introduction</td>
     </tr>
    </table>
